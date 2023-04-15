@@ -168,7 +168,7 @@ class RefreshPairlist:
 
 if __name__ == "__main__":
     configs_path = Path("user_data/configs/")
-    db_url = "sqlite:///tradesv3.dryrun.sqlite"
-    strategy_name = "XGBoostLearnerStrategy"
-    config_name = "config_binance_xgboost.json"
+    db_url = "sqlite:///db.dryrun.sqlite"
+    strategy_name = "MyAwesomeStrategy"
+    config_name = "freqai_config.json"
     RefreshPairlist(configs_path, db_url, strategy_name, config_name).refresh_pairlist()
