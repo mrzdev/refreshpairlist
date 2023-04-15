@@ -38,8 +38,8 @@ class RefreshPairlist:
     # TODO: pull info from configuration file here
     @staticmethod
     def get_pairlist_robot_params() -> dict:
-        """User-defined parameters for the pairlist.robot api request Adjust to
-        your needs:
+        """User-defined parameters for the pairlist.robot api request, adjust
+        to your needs:
 
         filter: filter out some pairs
         minv: min. volatility
