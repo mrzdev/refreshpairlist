@@ -32,7 +32,7 @@ class RefreshPairlist:
         self._db_url = db_url
         self._strategy_name = strategy_name
         self._config_name = config_name
-        # LimiterSession to limit the number of request per minute
+        # just a protection to not spam anything in case of an incorrect usage
         self._session = LimiterSession(per_minute=5)
 
     # TODO: pull info from configuration file here
