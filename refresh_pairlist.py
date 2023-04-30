@@ -21,7 +21,7 @@ class RefreshPairlist:
     reload the bot for changes to take effect while using freqai-oriented
     strategies."""
 
-    def __init__(self, configs_path: str, db_url: str, strategy_name: str, config_name: str):
+    def __init__(self, configs_path: Path, db_url: str, strategy_name: str, config_name: str):
         """
         :param configs_path: the path to the folder where your configuration file is
         :param db_url: url of freqtrade's trades db
