@@ -29,7 +29,7 @@ def schedule_task():
     db_url = "sqlite:///db.dryrun.sqlite"
     strategy_name = "MyAwesomeStrategy"
     config_name = "freqai_config.json"
-    RefreshPairlist(configs_path, db_url, strategy_name, config_name).refresh_pairlist()
+    RefreshPairlist(configs_path, db_url, strategy_name, config_name)()
 
 if __name__ == "__main__":
     app.run()

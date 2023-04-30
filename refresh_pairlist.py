@@ -153,7 +153,7 @@ class RefreshPairlist:
         else:
             logger.warning(f"Obtaining access token failed - check your config")
 
-    def refresh_pairlist(self) -> None:
+    def __call__(self) -> None:
         """Refresh the pairlist in the configuration file and reload the
         bot."""
         if not self.is_trade_opened():
@@ -171,4 +171,4 @@ if __name__ == "__main__":
     db_url = "sqlite:///db.dryrun.sqlite"
     strategy_name = "MyAwesomeStrategy"
     config_name = "freqai_config.json"
-    RefreshPairlist(configs_path, db_url, strategy_name, config_name).refresh_pairlist()
+    RefreshPairlist(configs_path, db_url, strategy_name, config_name)()
