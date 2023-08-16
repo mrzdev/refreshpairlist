@@ -5,7 +5,7 @@ from pathlib import Path
 
 app = Rocketry()
 
-@app.task(daily, execution="async")
+@app.task(daily)
 def schedule_task():
     """
         Schedule a daily pairlist refreshing task, you need to change it with your info:
