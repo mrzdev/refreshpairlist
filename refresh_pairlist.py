@@ -74,9 +74,9 @@ class RefreshPairlist:
     def get_pairlist(self) -> list:
         """Request the pairlist with user-defined settings from the
         pairlist.robot api."""
-        logger.info(f"Pulling a fresh pairlist from http://pairlist.robot.co.network/")
+        logger.info(f"Pulling a fresh pairlist from http://remotepairlist.com/")
         params = self.get_pairlist_robot_params()
-        url = "http://pairlist.robot.co.network/"
+        url = "http://remotepairlist.com/"
         try:
             resp_json = self._session.request('GET', url, params=params, timeout=30).json()
             fresh_pairlist = resp_json["pairs"]
