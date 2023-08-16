@@ -84,18 +84,19 @@ class RefreshPairlist:
             fresh_pairlist = []
         return fresh_pairlist
 
-    def replace_config_pairs(self, requested_pairlist: list) -> None:
+    def replace_config_whitelist(self, requested_pairlist: list) -> list:
         """Replace the pair_whitelist with updated pairlist excluding the ones
         that are blacklisted."""
         with open(os.path.join(self._configs_path, self._config_name), "r+") as jsonFile:
             config = json.load(jsonFile)
             jsonFile.truncate(0)
             jsonFile.seek(0)
-            pairlist = [c for c in requested_pairlist \
+            filtered_pairlist = [c for c in requested_pairlist \
                         if c not in config["exchange"]["pair_blacklist"]]
-            config["exchange"]["pair_whitelist"] = pairlist
+            config["exchange"]["pair_whitelist"] = filtered_pairlist
             json.dump(config, jsonFile, indent=4)
             jsonFile.close()
+        return filtered_pairlist
 
     def is_trade_opened(self) -> bool:
         """Check if any trade is currently opened."""
@@ -159,8 +160,8 @@ class RefreshPairlist:
         if not self.is_trade_opened():
             updated_pairlist = self.get_pairlist()
             if len(updated_pairlist) > 0:
-                self.replace_config_pairs(updated_pairlist)
-                logger.info(f"Updated the {self._config_name} pairlist to {updated_pairlist}")
+                current_whitelist = self.replace_config_whitelist(updated_pairlist)
+                logger.info(f"Updated the {self._config_name} pairlist to {current_whitelist}")
                 logger.info(f"Reloading the bot...")
                 self.reload_bot()
         else:
