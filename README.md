@@ -9,4 +9,7 @@ __`python schedule_pairlist_refresh.py`__
 
 ### Requirements:  
 - requests_ratelimiter
-- rocketry
+- rocketry  
+
+Side note: There is an ongoing rocketry issue with the newest version of freqtrade (pydantic dependency conflict).  
+The hot fix is to run: `pip install rocketry --force` just after updating freqtrade.
