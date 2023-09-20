@@ -12,7 +12,7 @@ __`python schedule_pairlist_refresh.py`__
 - rocketry  
 
 Update: There is an ongoing rocketry issue with the pydantic v2 versions (causing dependency conflict with freqtrade).  
-The hotfix is to install both red-bird and pydantic from these forks until the fixes get merged: 
+The hotfix is to install both rocketry and red-bird from these forks until the fixes get merged: 
 ```
 pip install git+https://github.com/ManiMozaffar/rocketry
 pip install git+https://github.com/ManiMozaffar/red-bird
