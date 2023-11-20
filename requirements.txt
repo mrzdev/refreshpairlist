@@ -1,0 +1,2 @@
+requests-ratelimiter>=0.4.2
+schedule>=1.2.1

@@ -134,6 +134,7 @@ class RefreshPairlist:
     def reload_bot(self) -> None:
         """Reload the bot leveraging info provided in the configuration
         file."""
+        logger.info(f"Reloading the bot...")
         with open(os.path.join(self._configs_path, self._config_name), "r+") as jsonFile:
             config = json.load(jsonFile)
             jsonFile.close()
@@ -162,14 +163,13 @@ class RefreshPairlist:
             if len(updated_pairlist) > 0:
                 current_whitelist = self.replace_config_whitelist(updated_pairlist)
                 logger.info(f"Updated the {self._config_name} pairlist to {current_whitelist}")
-                logger.info(f"Reloading the bot...")
                 self.reload_bot()
         else:
             logger.warning(f"Trade detected, skipping")
 
 if __name__ == "__main__":
-    configs_path = Path("user_data/configs/")
-    db_url = "sqlite:///db.dryrun.sqlite"
+    configs_path = Path("../user_data/configs/")
+    db_url = "sqlite:///../db.dryrun.sqlite"
     strategy_name = "MyAwesomeStrategy"
     config_name = "freqai_config.json"
     RefreshPairlist(configs_path, db_url, strategy_name, config_name)()
