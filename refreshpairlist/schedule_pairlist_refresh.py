@@ -1,14 +1,25 @@
-from refresh_pairlist import RefreshPairlist
-from schedule import every, get_jobs, idle_seconds, run_pending
-import time, logging, functools
+from .refresh_pairlist import RefreshPairlist
+import argparse, time, logging, functools, schedule
 from pathlib import Path
-from typing import Callable
+from schedule import every, get_jobs, idle_seconds, run_pending
+from typing import Callable, Optional
 
 logging.basicConfig()
 schedule_logger = logging.getLogger('schedule')
 schedule_logger.setLevel(level=logging.INFO)
 
-def log_elapsed_time(func: Callable) -> Callable:
+# Create the parser
+parser = argparse.ArgumentParser(description='Refresh pairlist for Freqtrade.')
+# Add the arguments
+parser.add_argument('--strategy', type=str, required=True, help='The strategy name to use.')
+parser.add_argument('--config', type=str, required=True, help='The configuration file name to update.')
+parser.add_argument('--db-name', type=str, required=True, help='The db name of the selected strategy.')
+parser.add_argument('--db-url', type=str, required=False, help='The optional db url of the selected strategy.')
+
+# Parse the arguments
+args = parser.parse_args()
+
+def log_elapsed_time(func: Callable):
     """
         log the elapsed time of each job.
     """
@@ -22,16 +33,26 @@ def log_elapsed_time(func: Callable) -> Callable:
 
     return wrapper
 
+def find_freqtrade() -> Optional[Path]:
+    """
+        Find out where freqtrade is installed
+    """
+    freqtrade_path = None
+    try:
+        import freqtrade
+        # Get the path of the freqtrade module
+        freqtrade_module_path = Path(freqtrade.__file__).resolve()
+        # Navigate to the parent directory (root of the Freqtrade package)
+        freqtrade_path = freqtrade_module_path.parent.parent
+    except ImportError:
+        schedule_logger.error("Freqtrade installation not found")
+        raise ModuleNotFoundError("Freqtrade installation not found. Please install Freqtrade.")
+    return freqtrade_path
+
 @log_elapsed_time
 def refresh_pairlist():
     """
-        Call a pairlist refreshing task (you need to fill it with your info):
-            configs_path: a folder where your config is stored
-                (assuming freqtrade is located up by one directory if cloned!)
-            db_url: url of the freqtrade's database to check for open trades as we don't want
-                to risk removing the pair with an opened trade
-                (assuming freqtrade is located up by one directory if cloned!)
-            config_name: a config name which is being used by the currently running strategy
+        Call a pairlist refreshing task
         Use case:
             Useful for freqai because you can't use dynamic pairlist with refresh period,
             freqai needs a static pairlist to work correctly, but the workaround is to simply
@@ -44,11 +65,18 @@ def refresh_pairlist():
             it's important to know it won't likely reload the bot instantly. It is
             expected here.
     """
-    configs_path = Path("../user_data/configs/")
-    db_url = "sqlite:///../db.dryrun.sqlite"
-    strategy_name = "MyAwesomeStrategy"
-    config_name = "freqai_config.json"
-    RefreshPairlist(configs_path, db_url, strategy_name, config_name)()
+    # Resolve the configs_path and db_url relative to the Freqtrade installation path
+    freqtrade_path = find_freqtrade()
+    db_name = args.db_name
+    strategy_name = args.strategy
+    partial_config_path = args.config
+    config_path = freqtrade_path.joinpath(partial_config_path)
+    custom_db_url = args.db_url
+    if custom_db_url:
+        db_url = f"{custom_db_url}/{db_name}"
+    else:
+        db_url = f"sqlite:///{freqtrade_path}/{db_name}"
+    RefreshPairlist(config_path, db_url, strategy_name)()
 
 def schedule_task(enable_initial_refresh: bool = True):
     """
@@ -66,6 +94,3 @@ def schedule_task(enable_initial_refresh: bool = True):
             # sleep exactly the right amount of time
             time.sleep(n)
         run_pending()
-
-if __name__ == "__main__":
-    schedule_task()
