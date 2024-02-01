@@ -14,7 +14,7 @@ parser = argparse.ArgumentParser(description='Refresh pairlist for Freqtrade.')
 parser.add_argument('--strategy', type=str, required=True, help='The strategy name to use.')
 parser.add_argument('--config', type=str, required=True, help='The configuration file name to update.')
 parser.add_argument('--db-name', type=str, required=True, help='The db name of the selected strategy.')
-parser.add_argument('--db-url', type=str, required=False, help='The optional db url of the selected strategy.')
+parser.add_argument('--db-url', type=str, required=False, help='The optional db url of the selected strategy. (defaults to main freqtrade directory)')
 
 # Parse the arguments
 args = parser.parse_args()

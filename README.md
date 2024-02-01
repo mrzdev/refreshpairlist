@@ -2,19 +2,24 @@
 ## Dynamic Pairlist for FreqAI (freqtrade)  
      
 ### Installation    
-```In your main freqtrade directory, run:```    
+```Install from PyPi:```    
 ```console
-  git clone https://github.com/mrzdev/refreshpairlist.git
-  cd refreshpairlist
-  pip install -r requirements.txt
-```    
-:arrow_right: Be sure to update *schedule_pairlist_refresh.py* with the actual running strategy values.   
+  pip install refreshpairlist
+```
 :arrow_right: Remember to correctly configure api_server in your freqtrade configuration file.   
 
 ### Usage
+```console
+  refreshpairlist [-h] --strategy STRATEGY  --config CONFIG --db-name DB_NAME  [--db-url DB_URL]
+
+  --strategy STRATEGY  The strategy name to use.
+  --config CONFIG      The configuration file name to update.
+  --db-name DB_NAME    The db name of the selected strategy.
+  --db-url DB_URL      The optional db url of the selected strategy. (defaults to main freqtrade directory)
+```   
 ```To update pairlist daily, run:```    
 ```console
-  python schedule_pairlist_refresh.py
+  refreshpairlist --strategy MyAwesomeStrategy --config user_data/configs/freqai_config.json --db-url sqlite:////home/user/freqtrade --db-name tradesv3.dryrun.sqlite
 ```    
 
 ### Requirements:  
