@@ -36,7 +36,7 @@ class RefreshPairlist:
         # just a protection to not spam anything in case of an incorrect usage
         self._session = LimiterSession(per_minute=5)
 
-    def get_config(self) -> Optional[Dict]:
+    def read_config(self) -> Optional[Dict]:
         """
             Read the config file by provided path
         """
@@ -47,28 +47,27 @@ class RefreshPairlist:
         return config
 
     @staticmethod
-    def get_pairlist_robot_params(config: Optional[Dict]) -> Dict:
+    def get_remote_pairlist_params(config: Optional[Dict]) -> Dict:
         """
-            User-defined parameters for the pairlist.robot api request.
+            User-defined parameters for the remotepairlist api request.
             Customize to your needs in your config file under 
-            ["freqai"]["pairlist_robot_params"]:
+            ["freqai"]["remote_pairlist_params"]:
 
-            filter: filter out some pairs
+            filter: exclude certain pairs if applies to market
             minv: min. volatility
             maxv: max. volatility
-            mina: min. age (see train_period_days parameter in your config)
+            mina: min. age
             maxa: max. age
             sort: sort pairlist by
-            exchange: set the same as in your config
-            market: set the same as in your config
             limit: the number of pairs to update with
-            stake: see "stake_currency" in your config
-            stake_currency: see "stake_currency" in your config
             sort2: second sorting method of choice
         """
-        config_pairlist_robot_params = \
-            config.get("freqai", {}).get("pairlist_robot_params", None)
+        config_remote_pairlist_params = \
+            config.get("freqai", {}).get("remote_pairlist_params", None)
         # default params
+        exchange = config.get("exchange", {}).get("name", "binance")
+        market = config.get("trading_mode", "futures")
+        stake_currency = config.get("stake_currency", "USDT")
         params = dict(
             r=1,
             filter="meme+cpanic+ftoken+leveraged",
@@ -77,24 +76,24 @@ class RefreshPairlist:
             mina=150,
             maxa=-1,
             sort="marketcap",
-            exchange="binance",
-            market="futures",
-            stake="USDT",
+            exchange=exchange,
+            market=market,
+            stake=stake_currency,
             limit=11,
-            stake_currency="USDT",
+            stake_currency=stake_currency,
             sort2="rolling_volume_7"
         )
-        if config_pairlist_robot_params is not None:
-            params.update(config_pairlist_robot_params)
+        if config_remote_pairlist_params is not None:
+            params.update(config_remote_pairlist_params)
         return params
 
     def get_pairlist(self, config: Optional[Dict]) -> List:
         """
             Request the pairlist with user-defined settings from the
-            pairlist.robot api.
+            remotepairlist api.
         """
         logger.info(f"Pulling a fresh pairlist from http://remotepairlist.com/")
-        params = self.get_pairlist_robot_params(config)
+        params = self.get_remote_pairlist_params(config)
         url = "http://remotepairlist.com/"
         try:
             resp_json = self._session.request('GET', url, params=params, timeout=30).json()
@@ -184,7 +183,7 @@ class RefreshPairlist:
             Refresh the pairlist in the configuration file and reload the bot.
         """
         if not self.is_trade_opened():
-            config = self.get_config()
+            config = self.read_config()
             updated_pairlist = self.get_pairlist(config)
             if len(updated_pairlist) > 0:
                 current_whitelist = self.replace_config_whitelist(updated_pairlist)
