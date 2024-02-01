@@ -21,17 +21,15 @@ class RefreshPairlist:
     reload the bot for changes to take effect while using freqai-oriented
     strategies."""
 
-    def __init__(self, configs_path: Path, db_url: str, strategy_name: str, config_name: str):
+    def __init__(self, config_path: Path, db_url: str, strategy_name: str):
         """
-        :param configs_path: the path to the folder where your configuration file is
+        :param config_path: the path to the folder where your configuration file is
         :param db_url: url of freqtrade's trades db
         :param strategy_name: the name of the currently running freqtrade strategy
-        :param config_name: the name of the configuration file
         """
-        self._configs_path = configs_path
+        self._config_path = config_path
         self._db_url = db_url
         self._strategy_name = strategy_name
-        self._config_name = config_name
         # just a protection to not spam anything in case of an incorrect usage
         self._session = LimiterSession(per_minute=5)
 
@@ -87,7 +85,7 @@ class RefreshPairlist:
     def replace_config_whitelist(self, requested_pairlist: list) -> list:
         """Replace the pair_whitelist with updated pairlist excluding the ones
         that are blacklisted."""
-        with open(os.path.join(self._configs_path, self._config_name), "r+") as jsonFile:
+        with open(self._config_path, "r+") as jsonFile:
             config = json.load(jsonFile)
             jsonFile.truncate(0)
             jsonFile.seek(0)
@@ -134,8 +132,7 @@ class RefreshPairlist:
     def reload_bot(self) -> None:
         """Reload the bot leveraging info provided in the configuration
         file."""
-        logger.info(f"Reloading the bot...")
-        with open(os.path.join(self._configs_path, self._config_name), "r+") as jsonFile:
+        with open(self._config_path, "r+") as jsonFile:
             config = json.load(jsonFile)
             jsonFile.close()
         user_info = self.get_settings_from_config(config)
@@ -162,14 +159,8 @@ class RefreshPairlist:
             updated_pairlist = self.get_pairlist()
             if len(updated_pairlist) > 0:
                 current_whitelist = self.replace_config_whitelist(updated_pairlist)
-                logger.info(f"Updated the {self._config_name} pairlist to {current_whitelist}")
+                logger.info(f"Updated the {self._config_path} pairlist to {current_whitelist}")
+                logger.info(f"Reloading the bot...")
                 self.reload_bot()
         else:
             logger.warning(f"Trade detected, skipping")
-
-if __name__ == "__main__":
-    configs_path = Path("../user_data/configs/")
-    db_url = "sqlite:///../db.dryrun.sqlite"
-    strategy_name = "MyAwesomeStrategy"
-    config_name = "freqai_config.json"
-    RefreshPairlist(configs_path, db_url, strategy_name, config_name)()
