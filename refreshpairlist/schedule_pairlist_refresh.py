@@ -1,6 +1,6 @@
 from .refresh_pairlist import RefreshPairlist
+from .utils import find_freqtrade
 import argparse, time, logging, functools, schedule
-from pathlib import Path
 from schedule import every, get_jobs, idle_seconds, run_pending
 from typing import Callable, Optional
 
@@ -32,22 +32,6 @@ def log_elapsed_time(func: Callable):
         return result
 
     return wrapper
-
-def find_freqtrade() -> Optional[Path]:
-    """
-        Find out where freqtrade is installed
-    """
-    freqtrade_path = None
-    try:
-        import freqtrade
-        # Get the path of the freqtrade module
-        freqtrade_module_path = Path(freqtrade.__file__).resolve()
-        # Navigate to the parent directory (root of the Freqtrade package)
-        freqtrade_path = freqtrade_module_path.parent.parent
-    except ImportError:
-        schedule_logger.error("Freqtrade installation not found")
-        raise ModuleNotFoundError("Freqtrade installation not found. Please install Freqtrade.")
-    return freqtrade_path
 
 @log_elapsed_time
 def refresh_pairlist():
