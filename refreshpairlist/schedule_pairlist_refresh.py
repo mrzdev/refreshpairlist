@@ -2,7 +2,7 @@ from .refresh_pairlist import RefreshPairlist
 from .utils import find_freqtrade
 import argparse, time, logging, functools, schedule
 from schedule import every, get_jobs, idle_seconds, run_pending
-from typing import Callable, Optional
+from typing import Callable
 
 logging.basicConfig()
 schedule_logger = logging.getLogger('schedule')
