@@ -13,7 +13,7 @@
   refreshpairlist [-h] --strategy STRATEGY  --config CONFIG --db-name DB_NAME  [--db-url DB_URL]
 
   --strategy STRATEGY  The strategy name to use.
-  --config CONFIG      The configuration file name to update.
+  --config CONFIG      The target configuration file path.
   --db-name DB_NAME    The db name of the selected strategy.
   --db-url DB_URL      The optional db url of the selected strategy. (defaults to main freqtrade directory)
 ```   
