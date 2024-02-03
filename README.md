@@ -24,7 +24,7 @@
                   --db-url sqlite:////home/user/freqtrade \
                   --db-name tradesv3.dryrun.sqlite
 ```    
-```The default remotepairlist params set are following:```:
+```The default remotepairlist params set are following:```
 ```json
     "remote_pairlist_params": {
       "filter": "meme+cpanic+ftok+leveraged",
