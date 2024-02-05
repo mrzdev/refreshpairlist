@@ -13,6 +13,5 @@ def find_freqtrade() -> Optional[Path]:
         # Navigate to the parent directory (root of the Freqtrade package)
         freqtrade_path = freqtrade_module_path.parent.parent
     except ImportError:
-        schedule_logger.error("Freqtrade installation not found")
         raise ModuleNotFoundError("Freqtrade installation not found. Please install Freqtrade.")
     return freqtrade_path
