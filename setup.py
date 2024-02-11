@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name='refreshpairlist',
-    version='0.0.4',
+    version='0.0.5',
     author='mrzdev',
     description='Dynamic Pairlist for FreqAI (freqtrade)',
     long_description=open('README.md').read(),
